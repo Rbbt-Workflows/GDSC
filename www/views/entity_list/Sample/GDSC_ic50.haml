@@ -1,0 +1,31 @@
+- action_card = ActionCard.new
+= action_card_render action_card do
+  - ccle = list.study
+  - ccle_sample_cell_lines = ccle.dir.samples.tsv(:fields => ["Cell line primary name"], :type => :single)
+  - sample_cell_lines = Misc.process_to_hash(list){|list| ccle_sample_cell_lines.values_at(*list)}
+  - all_gdsc_samples = GDSC.drug_ic50.tsv.fields
+  - gdsc_samples = sample_cell_lines.select{|k,v| all_gdsc_samples.include? v}.collect{|k,v| v}
+  - all_cell_lines = GDSC.drug_ic50.tsv.fields
+  - rest = all_cell_lines - gdsc_samples
+  - rest = rest & ccle_sample_cell_lines.values.compact.flatten.uniq
+  - m = Matrix.new(GDSC.drug_ic50.produce.find, "Drug")
+  - cutoff = 0.1
+  - diffs = m.sample_differences(gdsc_samples, rest)
+
+  %dl.tabs
+    %dt Main cell lines (#{gdsc_samples.length})
+    %dd= gdsc_samples.sort * ", "
+    %dt Contrast cell lines  (#{rest.length})
+    %dd= rest.sort * ", "
+
+  %h3 Tumor shrinkage IC50
+  = table do
+    - Expression.top_down(diffs, cutoff)
+ 
+  %h3 Tumor growth IC50
+  = table do
+    - Expression.top_up(diffs, cutoff)
+
+ 
+
+ 

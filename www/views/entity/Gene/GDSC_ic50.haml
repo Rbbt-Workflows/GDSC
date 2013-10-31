@@ -1,0 +1,26 @@
+- action_card = ActionCard.new
+= action_card_render action_card do
+  - name = entity.name
+  - mutated_cell_lines = GDSC.gene_variants.tsv(:persist => true).select(name){|v| not v.nil? and not v.empty?}.keys
+  - cnv_cell_lines = GDSC.gene_CN.tsv(:persist => true).select(name){|v| not v.nil? and not v.empty?}.keys
+  - affected_cell_lines = (mutated_cell_lines + cnv_cell_lines).uniq
+  - all_cell_lines = GDSC.drug_ic50.tsv.fields
+  - rest = all_cell_lines - affected_cell_lines
+  - m = Matrix.new(GDSC.drug_ic50.produce.find, "Drug")
+  - cutoff = 0.1
+  - diffs = m.sample_differences(affected_cell_lines, rest)
+
+  %dl.tabs
+    %dt Main cell lines (#{affected_cell_lines.length})
+    %dd= affected_cell_lines.sort * ", "
+    %dt Contrast cell lines  (#{rest.length})
+    %dd= rest.sort * ", "
+
+  %h3 Tumor shrinkage IC50
+  = table do
+    - Expression.top_down(diffs, cutoff)
+ 
+  %h3 Tumor growth IC50
+  = table do
+    - Expression.top_up(diffs, cutoff)
+

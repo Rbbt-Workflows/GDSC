@@ -1,0 +1,24 @@
+GDSC=/$PWD filter="*.rb *.R *.js *.sass *.haml *.tsv" {
+ workflow.rb
+ lib=lib {
+  gdsc.rb
+ }
+ www=www {
+  views=views{
+   entity=entity{
+    Sample=Sample{
+     GDSC_ic50.haml
+    }
+    Gene=Gene{
+     GDSC_ic50.haml
+    }
+   }
+   entity_list=entity_list{
+    Sample=Sample{
+     GDSC_ic50.haml
+     GDSC_ic50.check
+    }
+   }
+  }
+ }
+}

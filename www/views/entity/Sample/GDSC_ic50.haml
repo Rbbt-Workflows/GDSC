@@ -1,0 +1,36 @@
+- action_card = ActionCard.new
+= action_card_render action_card do
+  - Workflow.require_workflow 'GDSC'
+  - gene_mutation_sensitivity = GDSC.job(:gene_mutation_sensitivity, nil).run
+  - gene_good_associations = {}
+  - gene_bad_associations = {}
+  - entity.affected_genes.each do |gene|
+    - next unless gene_mutation_sensitivity.include? gene
+    - good, bad = gene_mutation_sensitivity[gene].values_at "Shrinkage", "Growth"
+    - gene_good_associations[gene] = good if good.any?
+    - gene_bad_associations[gene] = good if bad.any?
+
+  - if gene_good_associations.any?
+    %h4 Drugs associated with shrinkage (good)
+    %dl
+      - gene_good_associations.each do |gene, drugs|
+        - next if drugs.empty?
+        - gene= Gene.setup(gene.dup, "Ensembl Gene ID", entity.study.organism)
+        %dt= gene.name
+        %dd
+          %ul
+            - drugs.each do |drug|
+              %li= drug
+
+  - if gene_bad_associations.any?
+    %h4 Drugs associated with growth (bad)
+    %dl
+      - gene_bad_associations.each do |gene, drugs|
+        - next if drugs.empty?
+        - gene = Gene.setup(gene.dup, "Ensembl Gene ID", entity.study.organism)
+        %dt= gene.name
+        %dd
+          %ul
+            - drugs.each do |drug|
+              %li= drug
+

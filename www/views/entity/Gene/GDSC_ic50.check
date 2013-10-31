@@ -1,0 +1,2 @@
+genes = GDSC.gene_info.tsv.fields
+genes.include? entity.name
