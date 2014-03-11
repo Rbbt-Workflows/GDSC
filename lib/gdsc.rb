@@ -1,7 +1,9 @@
-require 'rbbt'
+require 'rbbt-util'
+require 'rbbt/tsv'
 require 'rbbt/util/cmd'
 require 'rbbt/util/open'
 require 'rbbt/resource'
+require 'rbbt/sources/organism'
 
 module GDSC
   extend Resource
@@ -35,4 +37,16 @@ module GDSC
     tsv.fields = drugs.collect{|d| d.sub('_IC_50','')}
     tsv.transpose("Drug").to_s
   end
+
+  GDSC.claim GDSC.gene_expression, :proc do
+    tsv = TSV.open("ftp://ftp.sanger.ac.uk/pub4/cancerrxgene/releases/release-2.0/expU133A.txt", :header_hash => '', :type => :list, :cast => :to_f)
+    keys = tsv.keys
+    file = Organism.identifiers("Hsa").find.to_s
+    counts = TSV.field_match_counts(file, keys)
+    probe_id = counts.sort_by{|p| p[1]}.last[0]
+    tsv.key_field = probe_id
+    tsv.to_s
+  end
 end
+
+puts GDSC.gene_expression.tsv.summary

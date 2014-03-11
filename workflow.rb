@@ -1,11 +1,10 @@
 require 'rbbt/workflow'
 require 'rbbt/entity/study'
-require 'rbbt/entity/study/genotypes'
+#require 'rbbt/entity/study/genotypes'
 require 'gdsc'
 
 module GDSC
   extend Workflow
-  extend Resource
 
   task :ccle_sample2gdsc => :tsv do
     s = Study.setup("CCLE")
@@ -69,3 +68,4 @@ module GDSC
     gene_results
   end
 end
+
