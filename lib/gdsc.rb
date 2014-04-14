@@ -48,5 +48,3 @@ module GDSC
     tsv.to_s
   end
 end
-
-puts GDSC.gene_expression.tsv.summary
