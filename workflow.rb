@@ -1,6 +1,8 @@
 require 'rbbt/workflow'
+
+Workflow.require_workflow "Study"
+
 require 'rbbt/entity/study'
-#require 'rbbt/entity/study/genotypes'
 require 'gdsc'
 
 module GDSC
@@ -66,6 +68,26 @@ module GDSC
     end
 
     gene_results
+  end
+
+  input :gene, :string, "Gene"
+  input :confounding, :array, "Other genes that might be relevant", []
+  task :gene_sensitivity => :tsv do |gene, confounding|
+    tsv = GDSC.gene_variants.tsv
+
+    all_samples = tsv.keys
+
+    samples = tsv.column(gene).select{|s,v| not v.empty?}.keys
+
+    confounded_samples_tsv = tsv.reorder(:key, confounding)
+    confounded_samples = confounded_samples_tsv.select{|s,vs| not vs.flatten.compact.reject{|e| e.empty?}.empty?}.keys
+
+    contrast_samples = all_samples - samples
+    case_samples =  samples - confounded_samples
+
+    m = Matrix.new(GDSC.drug_ic50.produce.find, nil, :log, "Drug")
+    FileUtils.cp m.differential(case_samples, contrast_samples), self.path
+    nil
   end
 end
 

@@ -10,7 +10,7 @@ module GDSC
   self.subdir = "share/databases/GDSC"
 
   GDSC.claim GDSC[".source"].full, :proc do
-    CMD.cmd("tr ',' '\\t'|tr '' '\\n'|grep -v '^[[:space:]]'", :in => Open.open("ftp://ftp.sanger.ac.uk/pub4/cancerrxgene/current_release/gdsc_manova_input_w2.csv"))
+    CMD.cmd("tr ',' '\\t'|tr '' '\\n'|grep -v '^[[:space:]]'", :in => Open.open("ftp://ftp.sanger.ac.uk/pub4/cancerrxgene/releases/release-5.0/gdsc_manova_input_w5.csv"))
   end
 
   GDSC.claim GDSC.gene_info, :proc do
@@ -39,7 +39,7 @@ module GDSC
   end
 
   GDSC.claim GDSC.gene_expression, :proc do
-    tsv = TSV.open("ftp://ftp.sanger.ac.uk/pub4/cancerrxgene/releases/release-2.0/expU133A.txt", :header_hash => '', :type => :list, :cast => :to_f)
+    tsv = TSV.open("ftp://ftp.sanger.ac.uk/pub4/cancerrxgene/releases/release-5.0/expU133A.txt.zip", :header_hash => '', :type => :list, :cast => :to_f)
     keys = tsv.keys
     file = Organism.identifiers("Hsa").find.to_s
     counts = TSV.field_match_counts(file, keys)
