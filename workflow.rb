@@ -1,6 +1,5 @@
 require 'rbbt/workflow'
 
-Workflow.require_workflow "Study"
 
 require 'rbbt/entity/study'
 require 'gdsc'
@@ -9,9 +8,10 @@ module GDSC
   extend Workflow
 
   task :ccle_sample2gdsc => :tsv do
+    Workflow.require_workflow "Study"
     s = Study.setup("CCLE")
 
-    gdsc_samples = GDSC.drug_ic50.tsv.fields
+    gdsc_samples = GDSC.drug_ic52.tsv.fields
     ccle_samples = s.dir.samples.tsv(:fields => []).keys
 
     ccle_sample2cell_line = s.dir.samples.tsv(:fields => ["Cell line primary name", "Cell line aliases"], :type => :double)

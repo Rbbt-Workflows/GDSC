@@ -1,8 +1,11 @@
 GDSC=/$PWD filter="*.rb *.R *.js *.sass *.haml *.tsv" {
  workflow.rb
  lib=lib {
-  gdsc.rb
- }
+  rbbt=rbbt{
+   sources=sources{
+    gdsc.rb
+   }
+  }
  www=www {
   views=views{
    entity=entity{
