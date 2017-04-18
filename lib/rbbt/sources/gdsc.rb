@@ -122,7 +122,9 @@ module GDSC
       end
     end
 
-    tsv = tsv.reorder "DRUG_ID", %w(COSMIC_ID MAX_CONC_MICROMOLAR LN_IC50 AUC RMSE), :zipped => true
+    Log.tsv tsv
+
+    tsv = tsv.reorder "DRUG_ID", %w(COSMIC_ID MAX_CONC_MICROMOLAR LN_IC50 AUC RMSE), :zipped => true, :merge => true, :one2one => true
     tsv.fields = ["COSMIC cell line ID"] + tsv.fields[1..-1]
 
     tsv.process "COSMIC cell line ID" do |value|
@@ -161,3 +163,5 @@ if __FILE__ == $0
   Log.severity = 0
   Log.tsv GDSC.gene_CN.produce(true).tsv
 end
+
+GDSC.drug_AUC.produce(true) if __FILE__ == $0
