@@ -1,8 +1,6 @@
 require 'rbbt/workflow'
-
-
-require 'rbbt/entity/study'
-require 'gdsc'
+#require 'rbbt/entity/study'
+require 'rbbt/sources/gdsc'
 
 module GDSC
   extend Workflow

@@ -25,12 +25,14 @@ module GDSC
   end
 
   GDSC.claim GDSC.gene_variants, :proc do
-    tsv =  GDSC.gene_info.tsv :fix => proc{|l| l.gsub(/::.*?(\t|$)/, "\t").gsub(/wt|na/,'')}
+    tsv =  GDSC.gene_info.tsv :fix => proc{|l| l.gsub(/::[^\t]*?(\t|$)/, "\t").gsub(/wt|na/,'')}
     tsv.to_s
   end
 
   GDSC.claim GDSC.gene_CN, :proc do
-    tsv =  GDSC.gene_info.tsv :fix => proc{|l| l.gsub(/\t.*::/, "\t").gsub(/0<cn<8|nci/, '')}
+    tsv =  GDSC.gene_info.tsv :fix => proc{|l| l.gsub(/\t[^\t]*::/, "\t").gsub(/0<cn<8|nci/, '')}
+    ppp tsv
+
     tsv.to_s
   end
 
@@ -158,5 +160,7 @@ module GDSC
 
 end
 
-Log.severity = 0
-Log.tsv GDSC.gene_expression.produce(true).tsv
+if __FILE__ == $0
+  Log.severity = 0
+  Log.tsv GDSC.gene_CN.produce(true).tsv
+end
