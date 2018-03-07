@@ -109,6 +109,15 @@ module GDSC
     Misc.collapse_stream(dumper.stream)
   end
 
+  GDSC.claim GDSC.gene_expression, :proc do
+    url = "ftp://ftp.sanger.ac.uk/pub/project/cancerrxgene/releases/release-6.0/sanger1018_brainarray_ensemblgene_rma.txt.gz"
+    tsv = TSV.open(url, :header_hash => '')
+
+    tsv.key_field = "Ensembl Gene ID"
+    tsv.namespace = GDSC.organism
+    tsv.to_s
+  end
+
   GDSC.claim GDSC.drug_AUC, :proc do
     url = "ftp://ftp.sanger.ac.uk/pub/project/cancerrxgene/releases/release-6.0/v17_fitted_dose_response.xlsx"
     tsv = TSV.xlsx(url, :sheet => 0, :merge => true, :type => :double)
