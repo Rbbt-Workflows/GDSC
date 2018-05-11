@@ -167,11 +167,18 @@ module GDSC
     end
     cell_line_CEFs.to_s
   end
+
+  GDSC.claim GDSC.rna_seq_tpm, :proc do
+    require 'rbbt/sources/array_express'
+    url = "https://www.ebi.ac.uk/gxa/experiments-content/E-MTAB-3983/resources/ExperimentDownloadSupplier.RnaSeqBaseline/tpms.tsv"
+    tsv = ArrayExpress.tpm("E-MTAB-3983", GDSC.organism)
+    tsv
+  end
+
 end
 
 if __FILE__ == $0
   Log.severity = 0
-  GDSC.drug_AUC.produce(true) if __FILE__ == $0
-  Log.tsv GDSC.gene_CN.produce(true).tsv
+  GDSC.rna_seq_tpm.produce(true) if __FILE__ == $0
 end
 
